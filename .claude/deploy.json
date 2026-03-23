@@ -1,0 +1,15 @@
+{
+  "github_repo": "fcucullu/Goldenlist",
+  "supabase_project_ref": "ytgyumihoeiwuyxbptjj",
+  "vercel_project_name": "goldenlist",
+  "subdomain": "goldenlist",
+  "domain": "franciscocucullu.com",
+  "cloudflare_zone_id": "2db2af8fc814cbbdb1abedbcddf8c48c",
+  "supabase_url": "https://ytgyumihoeiwuyxbptjj.supabase.co",
+  "shared_supabase_project": true,
+  "google_oauth_configured": true,
+  "portfolio_title": "Golden List",
+  "portfolio_description": "A mobile-first PWA to stay in touch with friends and family. Set customizable reminders, track interaction history, and never forget to reach out to the people who matter.",
+  "portfolio_tags": ["Next.js", "Supabase", "PWA", "Vercel", "TypeScript"],
+  "portfolio_img": "/assets/stock-1.jpg"
+}
