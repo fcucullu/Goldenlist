@@ -1,65 +1,46 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import {
   ExternalLink,
   Sparkles,
-  ListChecks,
-  MessageSquare,
-  Wallet,
-  Dumbbell,
   Globe,
 } from "lucide-react";
 
-const apps = [
-  {
-    name: "Golden List",
-    tagline: "Never lose touch with who matters",
-    description:
-      "Smart contact reminder system. Set frequencies, track interactions, and keep your relationships alive.",
-    icon: ListChecks,
-    color: "#D4AF37",
-    url: "/dashboard",
-    status: "live" as const,
-  },
-  {
-    name: "CashFlow",
-    tagline: "Track every dollar effortlessly",
-    description:
-      "Minimal expense tracker with smart categorization and monthly insights. No clutter, just clarity.",
-    icon: Wallet,
-    color: "#4ADE80",
-    url: null,
-    status: "building" as const,
-  },
-  {
-    name: "FitLog",
-    tagline: "Your gym, your data, your gains",
-    description:
-      "Workout logger built for lifters. Track sets, reps, and PRs with zero friction.",
-    icon: Dumbbell,
-    color: "#F97316",
-    url: null,
-    status: "soon" as const,
-  },
-  {
-    name: "Lingua",
-    tagline: "Learn languages by doing",
-    description:
-      "Conversational language practice powered by AI. Real scenarios, real progress.",
-    icon: MessageSquare,
-    color: "#818CF8",
-    url: null,
-    status: "soon" as const,
-  },
-];
+interface AppEntry {
+  slug: string;
+  title: string;
+  description: string;
+  url: string;
+  img: string;
+  tags: string[];
+  status: "live" | "beta" | "offline";
+}
 
 const statusConfig = {
   live: { label: "Live", bg: "bg-emerald-500/10", text: "text-emerald-400", dot: "bg-emerald-400" },
-  building: { label: "Building", bg: "bg-amber-500/10", text: "text-amber-400", dot: "bg-amber-400" },
-  soon: { label: "Coming Soon", bg: "bg-zinc-500/10", text: "text-zinc-400", dot: "bg-zinc-400" },
+  beta: { label: "Beta", bg: "bg-amber-500/10", text: "text-amber-400", dot: "bg-amber-400" },
+  offline: { label: "Offline", bg: "bg-zinc-500/10", text: "text-zinc-400", dot: "bg-zinc-400" },
 };
 
+const APPS_API = "https://franciscocucullu.com/api/apps.json";
+
 export default function AppsPage() {
+  const [apps, setApps] = useState<AppEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    fetch(APPS_API)
+      .then((res) => {
+        if (!res.ok) throw new Error("fetch failed");
+        return res.json();
+      })
+      .then((data) => setApps(data))
+      .catch(() => setError(true))
+      .finally(() => setLoading(false));
+  }, []);
+
   return (
     <div>
       {/* Header */}
@@ -76,38 +57,53 @@ export default function AppsPage() {
 
       {/* App Cards */}
       <div className="space-y-4">
+        {loading && (
+          <div className="text-center py-8 text-gold-muted text-sm">Loading apps...</div>
+        )}
+        {error && (
+          <div className="text-center py-8 text-gold-muted text-sm">
+            Could not load apps.{" "}
+            <a
+              href="https://franciscocucullu.com/apps/"
+              target="_blank"
+              className="text-gold underline"
+            >
+              View on website
+            </a>
+          </div>
+        )}
         {apps.map((app) => {
           const status = statusConfig[app.status];
-          const Icon = app.icon;
 
           return (
-            <div
-              key={app.name}
-              className="bg-surface rounded-2xl border border-border hover:border-gold/20 transition-all duration-300 overflow-hidden"
+            <a
+              key={app.slug}
+              href={app.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block bg-surface rounded-2xl border border-border hover:border-gold/20 transition-all duration-300 overflow-hidden"
             >
               <div className="p-5">
                 {/* Top row: icon + name + status */}
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div
-                      className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0"
-                      style={{ backgroundColor: `${app.color}15` }}
-                    >
-                      <Icon
-                        className="w-5 h-5"
-                        style={{ color: app.color }}
-                      />
+                    <div className="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 bg-gold/10">
+                      <Globe className="w-5 h-5 text-gold" />
                     </div>
                     <div>
                       <h3 className="font-semibold text-foreground text-base leading-tight">
-                        {app.name}
+                        {app.title}
                       </h3>
-                      <p
-                        className="text-xs mt-0.5 font-medium"
-                        style={{ color: app.color }}
-                      >
-                        {app.tagline}
-                      </p>
+                      <div className="flex flex-wrap gap-1 mt-1">
+                        {app.tags.slice(0, 3).map((tag) => (
+                          <span
+                            key={tag}
+                            className="text-[10px] px-1.5 py-0.5 rounded-full bg-gold/10 text-gold-muted"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
                   <span
@@ -119,31 +115,28 @@ export default function AppsPage() {
                 </div>
 
                 {/* Description */}
-                <p className="text-xs text-gold-muted leading-relaxed">
-                  {app.description}
-                </p>
+                <p className="text-xs text-gold-muted leading-relaxed">{app.description}</p>
 
                 {/* CTA */}
-                {app.url && (
-                  <a
-                    href={app.url}
-                    className="inline-flex items-center gap-1.5 mt-4 text-xs font-medium text-gold hover:text-gold-light transition-colors"
-                  >
-                    Open App
-                    <ExternalLink className="w-3 h-3" />
-                  </a>
-                )}
+                <div className="inline-flex items-center gap-1.5 mt-4 text-xs font-medium text-gold">
+                  Open App
+                  <ExternalLink className="w-3 h-3" />
+                </div>
               </div>
-            </div>
+            </a>
           );
         })}
       </div>
 
       {/* Footer */}
       <div className="text-center mt-8 mb-4">
-        <p className="text-[11px] text-gold-muted/60">
-          More apps shipping soon. Stay tuned.
-        </p>
+        <a
+          href="https://franciscocucullu.com/apps/"
+          target="_blank"
+          className="text-[11px] text-gold-muted/60 hover:text-gold transition-colors"
+        >
+          View all on franciscocucullu.com
+        </a>
       </div>
     </div>
   );
