@@ -15,7 +15,7 @@ export function InteractionForm({
   const [notes, setNotes] = useState("");
 
   return (
-    <div className="fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/60 flex items-end sm:items-center justify-center z-[60] p-4 pb-[calc(4.5rem+env(safe-area-inset-bottom))] sm:pb-4">
       <div className="bg-surface rounded-2xl w-full max-w-sm border border-border">
         <div className="flex items-center justify-between p-4 border-b border-border">
           <h3 className="font-semibold text-foreground">
