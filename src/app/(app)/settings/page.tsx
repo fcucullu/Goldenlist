@@ -60,7 +60,7 @@ export default function SettingsPage() {
 
         const sub = await reg.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY,
+          applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "BG3L_PyTEDh72ZxUvqWMwtTWJDUcMJwGDPF9AP2TtfD2j7pQ2N3kpA5JB273GJZuHC86mi1J8ew1oBvgwExm8ck",
         });
 
         await fetch("/api/push/subscribe", {
