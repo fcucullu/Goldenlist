@@ -1,11 +1,7 @@
 const CACHE_NAME = "goldenlist-v1";
-const STATIC_ASSETS = ["/", "/dashboard", "/contacts", "/categories", "/settings"];
 
-// Install: pre-cache app shell
+// Install: skip pre-caching auth-protected routes
 self.addEventListener("install", (event) => {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => cache.addAll(STATIC_ASSETS))
-  );
   self.skipWaiting();
 });
 
@@ -23,7 +19,7 @@ self.addEventListener("activate", (event) => {
   self.clients.claim();
 });
 
-// Fetch: network-first for navigation, cache-first for static assets
+// Fetch: network-first, cache successful responses for offline use
 self.addEventListener("fetch", (event) => {
   const { request } = event;
 
@@ -47,10 +43,6 @@ self.addEventListener("fetch", (event) => {
         // Fallback to cache
         return caches.match(request).then((cached) => {
           if (cached) return cached;
-          // For navigation, fallback to dashboard
-          if (request.mode === "navigate") {
-            return caches.match("/dashboard");
-          }
           return new Response("Offline", { status: 503 });
         });
       })

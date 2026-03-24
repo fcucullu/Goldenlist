@@ -13,6 +13,7 @@ export default function SettingsPage() {
   const [pushSupported, setPushSupported] = useState(false);
   const [pushEnabled, setPushEnabled] = useState(false);
   const [pushLoading, setPushLoading] = useState(false);
+  const [pushError, setPushError] = useState<string | null>(null);
 
   useEffect(() => {
     supabase.auth.getUser().then(async ({ data: { user } }) => {
@@ -38,6 +39,7 @@ export default function SettingsPage() {
 
   const togglePush = async () => {
     setPushLoading(true);
+    setPushError(null);
     try {
       const reg = await navigator.serviceWorker.ready;
 
@@ -53,14 +55,20 @@ export default function SettingsPage() {
         setPushEnabled(false);
       } else {
         const permission = await Notification.requestPermission();
+        if (permission === "denied") {
+          setPushError("Notifications blocked. Enable them in your browser settings for this site.");
+          setPushLoading(false);
+          return;
+        }
         if (permission !== "granted") {
+          setPushError("Notification permission not granted.");
           setPushLoading(false);
           return;
         }
 
         const sub = await reg.pushManager.subscribe({
           userVisibleOnly: true,
-          applicationServerKey: process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY || "BG3L_PyTEDh72ZxUvqWMwtTWJDUcMJwGDPF9AP2TtfD2j7pQ2N3kpA5JB273GJZuHC86mi1J8ew1oBvgwExm8ck",
+          applicationServerKey: "BG3L_PyTEDh72ZxUvqWMwtTWJDUcMJwGDPF9AP2TtfD2j7pQ2N3kpA5JB273GJZuHC86mi1J8ew1oBvgwExm8ck",
         });
 
         await fetch("/api/push/subscribe", {
@@ -72,6 +80,7 @@ export default function SettingsPage() {
       }
     } catch (err) {
       console.error("Push toggle error:", err);
+      setPushError(err instanceof Error ? err.message : "Something went wrong");
     }
     setPushLoading(false);
   };
@@ -146,6 +155,9 @@ export default function SettingsPage() {
             </button>
           )}
         </div>
+        {pushError && (
+          <p className="text-xs text-red-400 mt-2">{pushError}</p>
+        )}
       </div>
 
       {/* Sign Out */}
