@@ -27,6 +27,26 @@ export default function DashboardPage() {
     fetchContacts();
   }, [fetchContacts]);
 
+  // Update app badge with overdue count
+  useEffect(() => {
+    const now = new Date();
+    const dueCount = contacts.filter(
+      (c) => c.next_reminder_at && new Date(c.next_reminder_at) <= now
+    ).length;
+
+    if ("setAppBadge" in navigator) {
+      if (dueCount > 0) {
+        navigator.setAppBadge(dueCount).catch(() => {});
+      } else {
+        navigator.clearAppBadge?.().catch(() => {});
+      }
+    }
+    // Also tell the service worker to update
+    if ("serviceWorker" in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage("update-badge");
+    }
+  }, [contacts]);
+
   const handleContact = async (notes: string) => {
     if (!contactingId) return;
     await supabase.rpc("record_contact", {

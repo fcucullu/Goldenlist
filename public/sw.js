@@ -1,20 +1,28 @@
-const CACHE_NAME = "goldenlist-v1";
+const CACHE_NAME = "goldenlist-v2";
 
 // Install: skip pre-caching auth-protected routes
 self.addEventListener("install", (event) => {
   self.skipWaiting();
 });
 
-// Activate: clean old caches
+// Activate: clean old caches, register periodic sync
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((keys) =>
-      Promise.all(
-        keys
-          .filter((key) => key !== CACHE_NAME)
-          .map((key) => caches.delete(key))
-      )
-    )
+    Promise.all([
+      caches.keys().then((keys) =>
+        Promise.all(
+          keys
+            .filter((key) => key !== CACHE_NAME)
+            .map((key) => caches.delete(key))
+        )
+      ),
+      // Register periodic background sync (daily badge update)
+      self.registration.periodicSync
+        ? self.registration.periodicSync.register("update-badge", {
+            minInterval: 24 * 60 * 60 * 1000, // 24 hours
+          }).catch(() => {})
+        : Promise.resolve(),
+    ])
   );
   self.clients.claim();
 });
@@ -22,17 +30,12 @@ self.addEventListener("activate", (event) => {
 // Fetch: network-first, cache successful responses for offline use
 self.addEventListener("fetch", (event) => {
   const { request } = event;
-
-  // Skip non-GET requests
   if (request.method !== "GET") return;
-
-  // Skip API/supabase requests
   if (request.url.includes("/api/") || request.url.includes("supabase")) return;
 
   event.respondWith(
     fetch(request)
       .then((response) => {
-        // Cache successful responses
         if (response.ok) {
           const clone = response.clone();
           caches.open(CACHE_NAME).then((cache) => cache.put(request, clone));
@@ -40,7 +43,6 @@ self.addEventListener("fetch", (event) => {
         return response;
       })
       .catch(() => {
-        // Fallback to cache
         return caches.match(request).then((cached) => {
           if (cached) return cached;
           return new Response("Offline", { status: 503 });
@@ -49,7 +51,30 @@ self.addEventListener("fetch", (event) => {
   );
 });
 
-// Push notification handler
+// Update badge count by calling the badge API
+async function updateBadge() {
+  try {
+    const response = await fetch("/api/badge", { credentials: "include" });
+    if (!response.ok) return;
+    const { count } = await response.json();
+    if (navigator.setAppBadge) {
+      if (count > 0) {
+        await navigator.setAppBadge(count);
+      } else {
+        await navigator.clearAppBadge();
+      }
+    }
+  } catch {}
+}
+
+// Periodic background sync handler
+self.addEventListener("periodicsync", (event) => {
+  if (event.tag === "update-badge") {
+    event.waitUntil(updateBadge());
+  }
+});
+
+// Update badge on push notification
 self.addEventListener("push", (event) => {
   const data = event.data ? event.data.json() : {};
   const title = data.title || "Golden List";
@@ -61,7 +86,12 @@ self.addEventListener("push", (event) => {
     vibrate: [200, 100, 200],
   };
 
-  event.waitUntil(self.registration.showNotification(title, options));
+  event.waitUntil(
+    Promise.all([
+      self.registration.showNotification(title, options),
+      updateBadge(),
+    ])
+  );
 });
 
 // Notification click handler
@@ -71,14 +101,19 @@ self.addEventListener("notificationclick", (event) => {
 
   event.waitUntil(
     self.clients.matchAll({ type: "window" }).then((clients) => {
-      // Focus existing window if available
       for (const client of clients) {
         if (client.url.includes(url) && "focus" in client) {
           return client.focus();
         }
       }
-      // Open new window
       return self.clients.openWindow(url);
     })
   );
+});
+
+// Message handler — allows the app to trigger badge updates
+self.addEventListener("message", (event) => {
+  if (event.data === "update-badge") {
+    event.waitUntil(updateBadge());
+  }
 });

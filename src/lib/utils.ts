@@ -33,6 +33,7 @@ export function formatRelativeDate(date: string) {
 }
 
 export const FREQUENCY_OPTIONS = [
+  { value: 2, label: "Every other day" },
   { value: 7, label: "Weekly" },
   { value: 14, label: "Every 2 weeks" },
   { value: 30, label: "Monthly" },
