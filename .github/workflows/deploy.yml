@@ -38,7 +38,7 @@ jobs:
         run: |
           # All apps share one Supabase project. Create placeholder files
           # for remote migrations pushed by other apps so db push doesn't fail.
-          REMOTE_VERSIONS=$(supabase migration list 2>/dev/null | awk '/^   [0-9]/{print $1}' | sort -u)
+          REMOTE_VERSIONS=$(supabase migration list 2>&1 | awk '/^   [0-9]/{print $1}' | sort -u)
           for v in $REMOTE_VERSIONS; do
             if ! ls supabase/migrations/${v}* 2>/dev/null | grep -q .; then
               touch "supabase/migrations/${v}_.sql"
