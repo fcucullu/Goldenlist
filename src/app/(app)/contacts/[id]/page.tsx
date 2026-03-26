@@ -31,12 +31,12 @@ export default function ContactDetailPage() {
   const fetchData = useCallback(async () => {
     const [contactRes, interactionsRes] = await Promise.all([
       supabase
-        .from("contacts")
-        .select("*, categories(*)")
+        .from("goldenlist_contacts")
+        .select("*, goldenlist_categories(*)")
         .eq("id", id)
         .single(),
       supabase
-        .from("interactions")
+        .from("goldenlist_interactions")
         .select("*")
         .eq("contact_id", id)
         .order("created_at", { ascending: false }),
@@ -66,7 +66,7 @@ export default function ContactDetailPage() {
 
   const handleDelete = async () => {
     if (!confirm("Delete this contact?")) return;
-    await supabase.from("contacts").delete().eq("id", id);
+    await supabase.from("goldenlist_contacts").delete().eq("id", id);
     router.push("/contacts");
   };
 

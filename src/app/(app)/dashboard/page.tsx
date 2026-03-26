@@ -16,8 +16,8 @@ export default function DashboardPage() {
 
   const fetchContacts = useCallback(async () => {
     const { data } = await supabase
-      .from("contacts")
-      .select("*, categories(*)")
+      .from("goldenlist_contacts")
+      .select("*, goldenlist_categories(*)")
       .order("next_reminder_at", { ascending: true, nullsFirst: true });
     if (data) setContacts(data);
     setLoading(false);

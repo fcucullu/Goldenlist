@@ -19,7 +19,7 @@ export default function CategoriesPage() {
 
   const fetchCategories = async () => {
     const { data } = await supabase
-      .from("categories")
+      .from("goldenlist_categories")
       .select("*")
       .order("sort_order");
     if (data) setCategories(data);
@@ -32,7 +32,7 @@ export default function CategoriesPage() {
   const handleAdd = async () => {
     if (!newName.trim()) return;
     const { data: { user } } = await supabase.auth.getUser();
-    await supabase.from("categories").insert({
+    await supabase.from("goldenlist_categories").insert({
       user_id: user!.id,
       name: newName.trim(),
       color: newColor,
@@ -46,7 +46,7 @@ export default function CategoriesPage() {
   const handleUpdate = async (id: string) => {
     if (!editName.trim()) return;
     await supabase
-      .from("categories")
+      .from("goldenlist_categories")
       .update({ name: editName.trim(), color: editColor })
       .eq("id", id);
     setEditingId(null);
@@ -55,7 +55,7 @@ export default function CategoriesPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this group? Contacts in this group will become ungrouped.")) return;
-    await supabase.from("categories").delete().eq("id", id);
+    await supabase.from("goldenlist_categories").delete().eq("id", id);
     fetchCategories();
   };
 

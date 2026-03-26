@@ -22,7 +22,7 @@ export function ContactForm({ contact }: { contact?: Contact }) {
 
   useEffect(() => {
     supabase
-      .from("categories")
+      .from("goldenlist_categories")
       .select("*")
       .order("sort_order")
       .then(({ data }) => {
@@ -40,13 +40,13 @@ export function ContactForm({ contact }: { contact?: Contact }) {
     };
 
     if (contact) {
-      await supabase.from("contacts").update(payload).eq("id", contact.id);
+      await supabase.from("goldenlist_contacts").update(payload).eq("id", contact.id);
     } else {
       const {
         data: { user },
       } = await supabase.auth.getUser();
       await supabase
-        .from("contacts")
+        .from("goldenlist_contacts")
         .insert({ ...payload, user_id: user!.id });
     }
 

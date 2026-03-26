@@ -10,7 +10,7 @@ export async function GET() {
   }
 
   const { count } = await supabase
-    .from("contacts")
+    .from("goldenlist_contacts")
     .select("*", { count: "exact", head: true })
     .eq("user_id", user.id)
     .lte("next_reminder_at", new Date().toISOString());

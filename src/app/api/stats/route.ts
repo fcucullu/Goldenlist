@@ -5,14 +5,14 @@ export async function GET() {
 
   // Count unique users who have contacts in GoldenList
   const { data } = await supabase
-    .from("contacts")
+    .from("goldenlist_contacts")
     .select("user_id")
     .limit(1000);
 
   const uniqueUsers = new Set((data ?? []).map((d) => d.user_id));
 
   const { data: latest } = await supabase
-    .from("interactions")
+    .from("goldenlist_interactions")
     .select("created_at")
     .order("created_at", { ascending: false })
     .limit(1)

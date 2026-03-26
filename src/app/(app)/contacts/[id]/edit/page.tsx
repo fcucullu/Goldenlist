@@ -15,8 +15,8 @@ export default function EditContactPage() {
 
   useEffect(() => {
     supabase
-      .from("contacts")
-      .select("*, categories(*)")
+      .from("goldenlist_contacts")
+      .select("*, goldenlist_categories(*)")
       .eq("id", id)
       .single()
       .then(({ data }) => {

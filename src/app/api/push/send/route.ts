@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
   // Get all users with overdue contacts who have push subscriptions
   const { data: overdueContacts } = await supabase
-    .from("contacts")
+    .from("goldenlist_contacts")
     .select("user_id, name")
     .lte("next_reminder_at", new Date().toISOString());
 
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
 
   for (const [userId, names] of Object.entries(byUser)) {
     const { data: subscriptions } = await supabase
-      .from("push_subscriptions")
+      .from("goldenlist_push_subscriptions")
       .select("*")
       .eq("user_id", userId);
 
@@ -74,7 +74,7 @@ export async function POST(request: Request) {
         // Remove invalid subscriptions
         if (err && typeof err === "object" && "statusCode" in err && (err as { statusCode: number }).statusCode === 410) {
           await supabase
-            .from("push_subscriptions")
+            .from("goldenlist_push_subscriptions")
             .delete()
             .eq("id", sub.id);
         }

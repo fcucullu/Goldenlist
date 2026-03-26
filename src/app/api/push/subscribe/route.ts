@@ -13,7 +13,7 @@ export async function POST(request: Request) {
 
   const subscription = await request.json();
 
-  await supabase.from("push_subscriptions").upsert(
+  await supabase.from("goldenlist_push_subscriptions").upsert(
     {
       user_id: user.id,
       endpoint: subscription.endpoint,
@@ -39,7 +39,7 @@ export async function DELETE(request: Request) {
   const { endpoint } = await request.json();
 
   await supabase
-    .from("push_subscriptions")
+    .from("goldenlist_push_subscriptions")
     .delete()
     .eq("endpoint", endpoint)
     .eq("user_id", user.id);

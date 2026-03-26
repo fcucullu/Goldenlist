@@ -18,10 +18,10 @@ export default function ContactsPage() {
   useEffect(() => {
     Promise.all([
       supabase
-        .from("contacts")
-        .select("*, categories(*)")
+        .from("goldenlist_contacts")
+        .select("*, goldenlist_categories(*)")
         .order("name"),
-      supabase.from("categories").select("*").order("sort_order"),
+      supabase.from("goldenlist_categories").select("*").order("sort_order"),
     ]).then(([contactsRes, categoriesRes]) => {
       if (contactsRes.data) setContacts(contactsRes.data);
       if (categoriesRes.data) setCategories(categoriesRes.data);
