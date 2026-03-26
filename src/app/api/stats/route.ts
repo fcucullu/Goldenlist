@@ -3,9 +3,13 @@ import { createAdminClient } from "@/lib/supabase/admin";
 export async function GET() {
   const supabase = createAdminClient();
 
-  const { count: users } = await supabase
-    .from("profiles")
-    .select("*", { count: "exact", head: true });
+  // Count unique users who have contacts in GoldenList
+  const { data } = await supabase
+    .from("contacts")
+    .select("user_id")
+    .limit(1000);
+
+  const uniqueUsers = new Set((data ?? []).map((d) => d.user_id));
 
   const { data: latest } = await supabase
     .from("interactions")
@@ -15,7 +19,7 @@ export async function GET() {
     .single();
 
   return Response.json(
-    { users: users ?? 0, lastActivity: latest?.created_at ?? null },
+    { users: uniqueUsers.size, lastActivity: latest?.created_at ?? null },
     {
       headers: {
         "Access-Control-Allow-Origin": "https://franciscocucullu.com",
