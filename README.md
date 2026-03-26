@@ -1,46 +1,50 @@
+<p align="center">
+  <img src="public/icons/icon.svg" width="80" alt="Golden List" />
+</p>
+
 # Golden List
 
-Stay in touch with the people who matter. A mobile-first PWA that reminds you to reach out to friends, family, and contacts.
+**Stay in touch with the people who matter.**
 
-## Quick Deploy
+## The Problem
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Ffcucullu%2FGoldenlist&env=NEXT_PUBLIC_SUPABASE_URL,NEXT_PUBLIC_SUPABASE_ANON_KEY,SUPABASE_SERVICE_ROLE_KEY,NEXT_PUBLIC_VAPID_PUBLIC_KEY,VAPID_PRIVATE_KEY,VAPID_SUBJECT&envDescription=See%20DEPLOYMENT.md%20for%20setup%20instructions&project-name=goldenlist)
+We all have people we care about but slowly lose touch with — old friends, family members, ex-colleagues. Life gets busy, and without a system, months pass without reaching out. By the time you realize it, the relationship has faded.
 
-## Setup (5 steps from your phone)
+## The Solution
 
-### 1. Supabase
-- Go to [supabase.com](https://supabase.com) → **New Project** → name it `goldenlist`
-- Go to **Settings → API** → copy the **URL**, **anon key**, and **service_role key**
-- Go to **SQL Editor** → paste the contents of `supabase/migrations/001_initial_schema.sql` → **Run**
+Golden List is a mobile-first PWA that turns your relationships into a system. Add the people who matter, set how often you want to reach out (every 2 days, weekly, monthly, quarterly), and the app reminds you when it's time. Log each interaction, skip when you're busy, and track your contact history over time.
 
-### 2. Google OAuth
-- Go to [Google Cloud Console](https://console.cloud.google.com/apis/credentials)
-- **Create Credentials → OAuth client ID** (Web app)
-- Add redirect URI: `https://YOUR_SUPABASE_PROJECT.supabase.co/auth/v1/callback`
-- Copy Client ID + Secret
+## Who It's For
 
-### 3. Enable Google in Supabase
-- In Supabase → **Authentication → Providers → Google**
-- Paste the Client ID + Secret → Save
+- People who value relationships but struggle to maintain them
+- Anyone who's ever said "we should catch up" and never did
+- Couples who want to stay connected with both families
 
-### 4. Deploy to Vercel
-- Click the **Deploy** button above (or import the repo at [vercel.com](https://vercel.com))
-- Fill in the env vars when prompted:
+## Key Features
 
-| Variable | Value |
-|---|---|
-| `NEXT_PUBLIC_SUPABASE_URL` | from step 1 |
-| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | from step 1 |
-| `SUPABASE_SERVICE_ROLE_KEY` | from step 1 |
-| `NEXT_PUBLIC_VAPID_PUBLIC_KEY` | generate with `npx web-push generate-vapid-keys` |
-| `VAPID_PRIVATE_KEY` | from the same command above |
-| `VAPID_SUBJECT` | `mailto:your-email@example.com` |
+- Google sign-in (no passwords)
+- Add contacts organized by categories
+- Custom reminder frequencies (every 2 days to quarterly)
+- Dashboard showing overdue and upcoming contacts
+- Log interactions with notes or skip for later
+- Push notifications when contacts are due
+- App badge showing overdue contact count
+- Installable as a PWA on mobile
 
-### 5. Custom Domain + Final Config
-- In Vercel → **Settings → Domains** → add `goldenlist.franciscocucullu.com`
-- In your DNS: add CNAME `goldenlist` → `cname.vercel-dns.com`
-- In Supabase → **Authentication → URL Configuration**:
-  - Site URL: `https://goldenlist.franciscocucullu.com`
-  - Redirect URLs: `https://goldenlist.franciscocucullu.com/callback`
+## Tech Stack
 
-Done! Open your site and sign in with Google.
+Next.js, Supabase (Postgres + Auth + Real-time), Vercel, Cloudflare DNS, PWA with Web Push
+
+## Live
+
+https://goldenlist.franciscocucullu.com
+
+---
+
+## Author
+
+**Francisco Cucullu** — Software engineer and indie developer building side projects from scratch.
+
+- Website: [franciscocucullu.com](https://franciscocucullu.com)
+- LinkedIn: [linkedin.com/in/franciscocucullu](https://linkedin.com/in/franciscocucullu)
+- All apps: [franciscocucullu.com/apps](https://franciscocucullu.com/apps)
