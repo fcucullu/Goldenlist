@@ -7,6 +7,7 @@ import { InteractionForm } from "@/components/interaction-form";
 import type { Contact } from "@/lib/types/database";
 import { Plus } from "lucide-react";
 import Link from "next/link";
+import { InstallPrompt } from "@/components/install-prompt";
 
 export default function DashboardPage() {
   const supabase = createClient();
@@ -74,7 +75,8 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <InstallPrompt />
+      <div className="flex items-center justify-between mb-6 mt-4">
         <div>
           <h1 className="text-2xl font-bold gold-shimmer">Golden List</h1>
           <p className="text-xs text-gold-muted mt-0.5">
