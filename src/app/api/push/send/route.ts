@@ -40,6 +40,7 @@ export async function POST(request: Request) {
   }
 
   let sent = 0;
+  let errors = 0;
 
   for (const [userId, names] of Object.entries(byUser)) {
     const { data: subscriptions } = await supabase
@@ -71,16 +72,21 @@ export async function POST(request: Request) {
         );
         sent++;
       } catch (err: unknown) {
+        errors++;
+        console.error("Push error:", err);
         // Remove invalid subscriptions
-        if (err && typeof err === "object" && "statusCode" in err && (err as { statusCode: number }).statusCode === 410) {
-          await supabase
-            .from("goldenlist_push_subscriptions")
-            .delete()
-            .eq("id", sub.id);
+        if (err && typeof err === "object" && "statusCode" in err) {
+          const statusCode = (err as { statusCode: number }).statusCode;
+          if (statusCode === 404 || statusCode === 410) {
+            await supabase
+              .from("goldenlist_push_subscriptions")
+              .delete()
+              .eq("id", sub.id);
+          }
         }
       }
     }
   }
 
-  return NextResponse.json({ sent });
+  return NextResponse.json({ sent, errors, overdue: overdueContacts.length });
 }
