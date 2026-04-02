@@ -140,19 +140,23 @@ export default function SettingsPage() {
             </div>
           </div>
           {pushSupported && (
-            <button
-              onClick={togglePush}
-              disabled={pushLoading}
-              className={`relative w-12 h-6 rounded-full transition-colors ${
-                pushEnabled ? "bg-gold" : "bg-border"
-              }`}
-            >
-              <span
-                className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-[#111] transition-transform ${
-                  pushEnabled ? "translate-x-6" : ""
+            pushLoading ? (
+              <div className="w-5 h-5 border-2 border-gold border-t-transparent rounded-full animate-spin" />
+            ) : (
+              <button
+                onClick={togglePush}
+                disabled={pushLoading}
+                className={`relative w-12 h-6 rounded-full transition-colors ${
+                  pushEnabled ? "bg-gold" : "bg-border"
                 }`}
-              />
-            </button>
+              >
+                <span
+                  className={`absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-[#111] transition-transform ${
+                    pushEnabled ? "translate-x-6" : ""
+                  }`}
+                />
+              </button>
+            )
           )}
         </div>
         {pushError && (
