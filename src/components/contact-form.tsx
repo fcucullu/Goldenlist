@@ -13,8 +13,6 @@ export function ContactForm({ contact }: { contact?: Contact }) {
   const [loading, setLoading] = useState(false);
   const [form, setForm] = useState({
     name: contact?.name || "",
-    phone: contact?.phone || "",
-    email: contact?.email || "",
     notes: contact?.notes || "",
     category_id: contact?.category_id || "",
     reminder_frequency_days: contact?.reminder_frequency_days || 14,
@@ -64,27 +62,6 @@ export function ContactForm({ contact }: { contact?: Contact }) {
           onChange={(e) => setForm({ ...form, name: e.target.value })}
           className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-gold-muted/50 focus:outline-none focus:border-gold/50"
           placeholder="John Doe"
-        />
-      </div>
-
-      <div>
-        <label className="block text-xs text-gold-muted mb-1.5">Phone</label>
-        <input
-          value={form.phone}
-          onChange={(e) => setForm({ ...form, phone: e.target.value })}
-          className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-gold-muted/50 focus:outline-none focus:border-gold/50"
-          placeholder="+1 234 567 8900"
-        />
-      </div>
-
-      <div>
-        <label className="block text-xs text-gold-muted mb-1.5">Email</label>
-        <input
-          type="email"
-          value={form.email}
-          onChange={(e) => setForm({ ...form, email: e.target.value })}
-          className="w-full bg-background border border-border rounded-xl px-4 py-2.5 text-sm text-foreground placeholder:text-gold-muted/50 focus:outline-none focus:border-gold/50"
-          placeholder="john@example.com"
         />
       </div>
 
